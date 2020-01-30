@@ -1,8 +1,18 @@
 version: "3"
 services:
-  redis-server:
+  redis:
     image: "redis"
-  node-app:
+    container_name: cache
+    expose:
+      - 6379
+  app:
     build: .
+    links:
+      - redis
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - NODE_TLS_REJECT_UNAUTHORIZED=0
+      - REDIS_URL=redis://cache
     ports:
       - "3000:3000"
