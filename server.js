@@ -8,13 +8,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.get("/", (req, res) => {
   return res.send(
-    "POST /redis\n\tbody: {key:key, value:value}\n\nGET /store/:redis"
+    "<b>POST</b> /set/:key<br/>body: {value:value}<br/><br/><b>GET</b> /get/:key"
   );
 });
 
-app.post("/redis", async (req, res) => {
+app.post("/set/:key", async (req, res) => {
   try {
-    const { key, value } = req.body;
+    const { key } = req.params;
+    const { value } = req.body;
     await redisClient.setAsync(key, JSON.stringify(value));
     return res.status(201).send("Added successfully");
   } catch (error) {
@@ -22,7 +23,7 @@ app.post("/redis", async (req, res) => {
   }
 });
 
-app.get("/redis/:key", async (req, res) => {
+app.get("/get/:key", async (req, res) => {
   try {
     const { key } = req.params;
     const rawData = await redisClient.getAsync(key);
